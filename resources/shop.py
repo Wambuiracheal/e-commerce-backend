@@ -1,4 +1,4 @@
-from flask import Flask,jsonify,request
+from flask import request
 from flask_restful import Resource
 from models import Product,db
 
@@ -24,16 +24,41 @@ class ProductDisplayResource(Resource):
 
         return new_product.to_dict(), 201
     
-    class ProductResource(Resource):
-        def get(self,id):
-            product = Product.query.get(id)
-            if not product:
-                return {"error": "Product not found"}, 404
-            return product.to_dict(), 200
-            
-        def patch(self,id):
+class ProductResource(Resource):
+    def get(self, id):
+
+        product = Product.query.get(id)
+        if not product:
+            return {"error": "Product not found"}, 404
+        return product.to_dict(), 200
         
+    def patch(self, id):
 
+        data = request.get_json()
+        product = Product.query.get(id)
+        if not product:
+            return {"error": "Product not found"}, 404
 
+        if 'name' in data:
+            product.name = data['name']
+        if 'price' in data:
+            product.price = data['price']
+        if 'description' in data:
+            product.description = data['description']
+        if 'url' in data:
+            product.url = data['url']
+        if 'category' in data:
+            product.category = data['category']
 
+        db.session.commit()
+        return [product.to_dict()], 200
 
+    def delete(self, id):
+
+        product = Product.query.get(id)
+        if not product:
+            return {"error": "Product not found"}, 404
+
+        db.session.delete(product)
+        db.session.commit()
+        return {"message": "Product deleted"}, 200
