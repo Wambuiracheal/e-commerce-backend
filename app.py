@@ -1,3 +1,6 @@
+from flask_restful import Api
+from models import db
+from flask_cors import CORS
 from flask import Flask, request, jsonify
 from models import db, OrderItem,Cart
 from flask_migrate import Migrate
@@ -7,12 +10,14 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 import os
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shopit.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+CORS(app)
 db.init_app(app)
 migrate = Migrate(app, db)
-
+api = Api(app)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
