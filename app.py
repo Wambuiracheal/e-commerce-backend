@@ -80,6 +80,9 @@ def create_app():
             'id': new_item.id,
             'price': new_item.price  
         }), 201
+    
+    # @app.route('/order_items/<int:item_id>', methods=['PUT'])
+    # def update_order_item(item_id):
 
 
     @app.route('/cart', methods=['GET'])
@@ -112,6 +115,8 @@ def create_app():
     return app
 
 
+
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True, port=5555)
+    # app.run(host='0.0.0.0', port=os.environ.get('PORT', 5555))
