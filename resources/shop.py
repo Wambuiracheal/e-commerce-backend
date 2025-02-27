@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from models import Product,db
 
+# PROUDUCTS CRUD OPERATION 
 class ProductDisplayResource(Resource):
     def get(self):
         products = Product.query.all()
@@ -62,3 +63,7 @@ class ProductResource(Resource):
         db.session.delete(product)
         db.session.commit()
         return {"message": "Product deleted"}, 200
+    
+# ORDERS CRUD OPERATION
+
+
