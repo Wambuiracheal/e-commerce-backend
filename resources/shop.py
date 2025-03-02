@@ -14,7 +14,7 @@ class ProductDisplayResource(Resource):
     def post(self):
         data = request.get_json()
 
-        required_fields = {"name","price","description","url","category"}
+        required_fields = {"name","price","description","image","category"}
         if not data or required_fields.issubset(data.keys()):
             return {"error": "Missing required fields"}, 400
         
@@ -49,8 +49,8 @@ class ProductResource(Resource):
             product.price = data['price']
         if 'description' in data:
             product.description = data['description']
-        if 'url' in data:
-            product.url = data['url']
+        if 'image' in data:
+            product.image = data['image']
         if 'category' in data:
             product.category = data['category']
 

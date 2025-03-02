@@ -9,11 +9,11 @@ class Product(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     seller_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    title = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
     category = db.Column(db.String(50), nullable=False)
-    image_url = db.Column(db.String(255), nullable=False)
+    image= db.Column(db.String(255), nullable=False)
     
     cart_items = db.relationship('Cart', backref='product', lazy=True)
     order_items = db.relationship('OrderItem', backref='product', lazy=True)

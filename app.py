@@ -27,6 +27,7 @@ def create_app():
     with app.app_context():
         db.create_all()
     
+    # ROUTES
     api.add_resource(ProductDisplayResource, '/products')
     api.add_resource(ProductResource, '/products/<int:id>')
     api.add_resource(OrderDisplayResource, "/orders")
