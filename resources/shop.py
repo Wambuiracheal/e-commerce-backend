@@ -2,8 +2,7 @@ from flask import request, jsonify
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash
-from models import db, Order
-from models import db, User
+from models import db, Order, User, Product
 
 # PRODUCTS CRUD OPERATION 
 class ProductDisplayResource(Resource):
