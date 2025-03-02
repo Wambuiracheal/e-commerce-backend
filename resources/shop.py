@@ -2,7 +2,7 @@ from flask import request, jsonify
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash
-from models import Product,db
+from models import db, Order
 from models import db, User
 
 # PRODUCTS CRUD OPERATION 
@@ -66,7 +66,74 @@ class ProductResource(Resource):
         db.session.delete(product)
         db.session.commit()
         return {"message": "Product deleted"}, 200
+   
+    #ORDER CRUD OPERATIONS
+class OrderDisplayResource(Resource):
+    def get(self):
+        orders = Order.query.all()
+        return [order.to_dict() for order in orders], 200
     
+    def post(self):
+        data = request.get_json()
+        required_fields = {"full_name", "address", "city", "payment_method", "total_amount"}
+        
+        if not data or not required_fields.issubset(data.keys()):
+            return {"error": "Missing required fields"}, 400
+        
+        new_order = Order(
+            full_name=data["full_name"],
+            address=data["address"],
+            city=data["city"],
+            payment_method=data["payment_method"],
+            total_amount=data["total_amount"],
+            status=data.get("status", "unpaid")
+        )
+
+        db.session.add(new_order)
+        db.session.commit()
+        return new_order.to_dict(), 201
+
+
+class OrderResource(Resource):
+    def get(self, id):
+        order = Order.query.get(id)
+        if not order:
+            return {"error": "Order not found"}, 404
+        
+        return order.to_dict(), 200
+    
+    def patch(self, id):
+        order = Order.query.get(id)
+        if not order:
+            return {"error": "Order not found"}, 404
+        
+        data = request.get_json()
+
+        if 'full_name' in data:
+            order.full_name = data['full_name']
+        if 'address' in data:
+            order.address = data['address']
+        if 'city' in data:
+            order.city = data['city']
+        if 'payment_method' in data:
+            order.payment_method = data['payment_method']
+        if 'total_amount' in data:
+            order.total_amount = data['total_amount']
+        if 'status' in data:
+            order.status = data['status']
+
+        db.session.commit()
+        return order.to_dict(), 200
+
+    def delete(self, id):
+        order = Order.query.get(id)
+        if not order:
+            return {"error": "Order not found"}, 404
+        
+        db.session.delete(order)
+        db.session.commit()
+        return {"message": "Order deleted successfully"}, 200
+
 # USERS CRUD OPERATION
 class RegisterResource(Resource):
     def post(self):

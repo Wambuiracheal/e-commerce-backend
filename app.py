@@ -8,6 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from models import db, OrderItem, Cart, User
 from resources.shop import ProductDisplayResource, ProductResource
+from resources.shop import OrderDisplayResource, OrderResource
 from resources.shop import RegisterResource, UserResource  
 
 def create_app():
@@ -28,9 +29,10 @@ def create_app():
     
     api.add_resource(ProductDisplayResource, '/products')
     api.add_resource(ProductResource, '/products/<int:id>')
+    api.add_resource(OrderDisplayResource, "/orders")
+    api.add_resource(OrderResource, "/orders/<int:id>")
     api.add_resource(RegisterResource, '/register')
     api.add_resource(UserResource, '/user')
-    # api.add_resource()
     
     @app.route('/')
     def home():
@@ -80,10 +82,32 @@ def create_app():
             'id': new_item.id,
             'price': new_item.price  
         }), 201
-    
-    # @app.route('/order_items/<int:item_id>', methods=['PUT'])
-    # def update_order_item(item_id):
 
+    @app.route('/register', methods=['POST'])
+    def register():
+        data = request.get_json()
+        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        new_user = User(name=data['name'], email=data['email'], password=hashed_password, role=data['role'])
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'User registered successfully'})
+
+    @app.route('/user', methods=['PATCH'])
+    @jwt_required()
+    def update_user():
+        user = get_jwt_identity()
+        user_info = User.query.get(user['id'])
+        if not user_info:
+            return jsonify({'error': 'User not found'}), 404
+
+        data = request.get_json()
+        if 'name' in data:
+            user_info.name = data['name']
+        if 'email' in data:
+            user_info.email = data['email']
+
+        db.session.commit()
+        return jsonify({'message': 'User updated successfully'})
 
     @app.route('/cart', methods=['GET'])
     def get_cart():
@@ -114,9 +138,6 @@ def create_app():
     
     return app
 
-
-
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True, port=5555)
-    # app.run(host='0.0.0.0', port=os.environ.get('PORT', 5555))
