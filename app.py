@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from models import db, OrderItem, Cart, User
 from resources.shop import ProductDisplayResource, ProductResource
 from resources.shop import OrderDisplayResource, OrderResource
-
+from resources.shop import RegisterResource, UserResource  
 
 def create_app():
     app = Flask(__name__)
@@ -29,10 +29,10 @@ def create_app():
     
     api.add_resource(ProductDisplayResource, '/products')
     api.add_resource(ProductResource, '/products/<int:id>')
-    # api.add_resource()
-
     api.add_resource(OrderDisplayResource, "/orders")
     api.add_resource(OrderResource, "/orders/<int:id>")
+    api.add_resource(RegisterResource, '/register')
+    api.add_resource(UserResource, '/user')
     
     @app.route('/')
     def home():
@@ -137,7 +137,6 @@ def create_app():
         return jsonify({"message": "Cart item removed"}), 200
     
     return app
-
 
 if __name__ == '__main__':
     app = create_app()

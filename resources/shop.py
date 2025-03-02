@@ -1,8 +1,11 @@
-from flask import request
+from flask import request, jsonify
 from flask_restful import Resource
-from models import Product,db
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from werkzeug.security import generate_password_hash
 from models import db, Order
+from models import db, User
 
+# PRODUCTS CRUD OPERATION 
 class ProductDisplayResource(Resource):
     def get(self):
         products = Product.query.all()
@@ -63,7 +66,7 @@ class ProductResource(Resource):
         db.session.delete(product)
         db.session.commit()
         return {"message": "Product deleted"}, 200
-    
+   
     #ORDER CRUD OPERATIONS
 class OrderDisplayResource(Resource):
     def get(self):
@@ -131,6 +134,51 @@ class OrderResource(Resource):
         db.session.commit()
         return {"message": "Order deleted successfully"}, 200
 
-    
+# USERS CRUD OPERATION
+class RegisterResource(Resource):
+    def post(self):
+        data = request.get_json()
+        hashed_password = generate_password_hash(data['password']).decode('utf-8')
+        new_user = User(
+            name=data['name'],
+            email=data['email'],
+            password=hashed_password,
+            role=data['role']
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'User registered successfully'}), 201
 
 
+class UserResource(Resource):
+    @jwt_required()
+    def patch(self):
+        user = get_jwt_identity()
+        user_info = User.query.get(user['id'])
+
+        if not user_info:
+            return jsonify({'error': 'User not found'}), 404
+
+        data = request.get_json()
+        if 'name' in data:
+            user_info.name = data['name']
+        if 'email' in data:
+            user_info.email = data['email']
+
+        db.session.commit()
+        return jsonify({'message': 'User updated successfully'})
+
+    @jwt_required()
+    def get(self):
+        user = get_jwt_identity()
+        user_info = User.query.get(user['id'])
+
+        if not user_info:
+            return jsonify({'error': 'User not found'}), 404
+
+        return jsonify({
+            'id': user_info.id,
+            'name': user_info.name,
+            'email': user_info.email,
+            'role': user_info.role
+        })
