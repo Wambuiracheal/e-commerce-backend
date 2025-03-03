@@ -6,7 +6,7 @@ from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
-from models import db, OrderItem, Cart, User
+from models import db, OrderItem, Cart, User, Product
 from resources.shop import ProductDisplayResource, ProductResource
 from resources.shop import OrderDisplayResource, OrderResource
 from resources.shop import RegisterResource, UserResource  
