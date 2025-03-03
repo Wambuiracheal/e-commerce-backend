@@ -13,19 +13,20 @@ class ProductDisplayResource(Resource):
     def post(self):
         data = request.get_json()
 
-        required_fields = {"name","price","description","image","category"}
-        if not data or required_fields.issubset(data.keys()):
+        required_fields = {"name", "price", "description", "image", "category"}
+        if not data or not required_fields.issubset(data.keys()):  # Fix applied
             return {"error": "Missing required fields"}, 400
-        
+
         existing_product = Product.query.filter_by(name=data["name"]).first()
         if existing_product:
             return {"error": "Product already exists"}, 400
-    
+
         new_product = Product(**data)
         db.session.add(new_product)
         db.session.commit()
 
         return new_product.to_dict(), 201
+
     
 class ProductResource(Resource):
     def get(self, id):

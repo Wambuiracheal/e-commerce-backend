@@ -18,6 +18,16 @@ class Product(db.Model):
     cart_items = db.relationship('Cart', backref='product', lazy=True)
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "category": self.category,
+            "image": self.image,
+            "seller_id": self.seller_id
+        }
+
 # ORDERS
 class Order(db.Model):
     __tablename__ = 'orders'
