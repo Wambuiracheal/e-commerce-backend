@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime
+from werkzeug.security import check_password_hash
 
 db = SQLAlchemy()
 
@@ -75,6 +76,8 @@ class User(db.Model):
     orders = db.relationship("Order", backref="user", lazy=True)
     cart_items = db.relationship("Cart", backref="user", lazy=True)
 
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 # CART
 class Cart(db.Model):
     __tablename__ = "cart"

@@ -1,5 +1,6 @@
 from app import app, db
-from models import Cart
+from models import Cart,User
+from werkzeug.security import generate_password_hash
 
 with app.app_context():
     cart_items = [
@@ -12,3 +13,4 @@ with app.app_context():
     db.session.commit()
 
     print("Database seeded successfully!")
+#

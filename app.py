@@ -5,17 +5,22 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity,create_access_token 
 from models import db, OrderItem, Cart, User
 from resources.shop import ProductDisplayResource, ProductResource
 from resources.shop import OrderDisplayResource, OrderResource
-from resources.shop import RegisterResource, UserResource  
+from resources.shop import RegisterResource, UserResource, LoginResource
+from datetime import timedelta
+
 
 def create_app():
     app = Flask(__name__)
     
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shopit.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['JWT_SECRET_KEY'] = 'bc9f3a4897ef90fc6c27f17ee1905a2f'
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)  
     
     CORS(app)
     db.init_app(app)
@@ -34,6 +39,8 @@ def create_app():
     api.add_resource(OrderResource, "/orders/<int:id>")
     api.add_resource(RegisterResource, '/register')
     api.add_resource(UserResource, '/user')
+    api.add_resource(LoginResource, '/login')
+
     
     @app.route('/')
     def home():
@@ -84,31 +91,6 @@ def create_app():
             'price': new_item.price  
         }), 201
 
-    @app.route('/register', methods=['POST'])
-    def register():
-        data = request.get_json()
-        hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-        new_user = User(name=data['name'], email=data['email'], password=hashed_password, role=data['role'])
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify({'message': 'User registered successfully'})
-
-    @app.route('/user', methods=['PATCH'])
-    @jwt_required()
-    def update_user():
-        user = get_jwt_identity()
-        user_info = User.query.get(user['id'])
-        if not user_info:
-            return jsonify({'error': 'User not found'}), 404
-
-        data = request.get_json()
-        if 'name' in data:
-            user_info.name = data['name']
-        if 'email' in data:
-            user_info.email = data['email']
-
-        db.session.commit()
-        return jsonify({'message': 'User updated successfully'})
 
     @app.route('/cart', methods=['GET'])
     def get_cart():
@@ -126,6 +108,7 @@ def create_app():
         db.session.add(new_cart_item)
         db.session.commit()
         return jsonify(new_cart_item.to_dict()), 201
+    
 
     @app.route('/cart/<int:cart_id>', methods=['DELETE'])
     def delete_cart_item(cart_id):
@@ -138,6 +121,7 @@ def create_app():
         return jsonify({"message": "Cart item removed"}), 200
     
     return app
+   
 
 if __name__ == '__main__':
     app = create_app()
