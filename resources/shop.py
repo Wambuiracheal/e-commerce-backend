@@ -186,11 +186,13 @@ class LoginResource(Resource):
             if user and check_password_hash(user.password, password):
                 access_token = create_access_token(identity=user.id)
                 print(f"Generated Access Token: {access_token}")
+
                 return {
                     "access_token": access_token,
                     "user": {
                         "id": user.id,
-                        "email": user.email
+                        "email": user.email,
+                        "role": user.role  
                     }
                 }, 200
             else:
