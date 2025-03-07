@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager, create_access_token
 from flask_restful import Api
 from flask_migrate import Migrate
 from datetime import datetime
+from flask_cors import CORS
 import requests
 import base64
 from config import Config

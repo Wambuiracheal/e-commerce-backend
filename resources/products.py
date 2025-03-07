@@ -1,8 +1,7 @@
 from flask import request, jsonify
 from flask_restful import Resource
 from database import db
-from models import Product, User
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from models import Product
 
 class ProductDisplayResource(Resource):
     def get(self):
@@ -10,15 +9,8 @@ class ProductDisplayResource(Resource):
         products = Product.query.all()
         return ([product.to_dict() for product in products]), 200
 
-    @jwt_required()
     def post(self):
-        """Restricted to admins: Create a new product."""
-        user_id = get_jwt_identity()
-        user = User.query.get(user_id)
-
-        if not user or user.role != "admin":  # Ensure only admins can create products
-            return {"error": "Unauthorized. Only admins can add products."}, 403
-
+        """Allow anyone to create a new product (No authentication required)."""
         data = request.get_json()
         required_fields = {"name", "price", "description", "image", "category"}
         if not data or not required_fields.issubset(data.keys()):
@@ -36,15 +28,8 @@ class ProductResource(Resource):
         product = Product.query.get(id)
         return product.to_dict(), 200 if product else ({"error": "Product not found"}, 404)
 
-    @jwt_required()
     def patch(self, id):
-        """Restricted to admins: Update a product."""
-        user_id = get_jwt_identity()
-        user = User.query.get(user_id)
-
-        if not user or user.role != "admin":
-            return {"error": "Unauthorized. Only admins can update products."}, 403
-
+        """Allow anyone to update a product (No authentication required)."""
         product = Product.query.get(id)
         if not product:
             return {"error": "Product not found"}, 404
@@ -56,15 +41,8 @@ class ProductResource(Resource):
         db.session.commit()
         return product.to_dict(), 200
 
-    @jwt_required()
     def delete(self, id):
-        """Restricted to admins: Delete a product."""
-        user_id = get_jwt_identity()
-        user = User.query.get(user_id)
-
-        if not user or user.role != "admin":
-            return {"error": "Unauthorized. Only admins can delete products."}, 403
-
+        """Allow anyone to delete a product (No authentication required)."""
         product = Product.query.get(id)
         if not product:
             return {"error": "Product not found"}, 404

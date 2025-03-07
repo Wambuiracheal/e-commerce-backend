@@ -17,7 +17,6 @@ class Product(db.Model):
     __tablename__ = 'products'
     
     id = db.Column(db.Integer, primary_key=True)
-    seller_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -30,7 +29,6 @@ class Product(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
-            "seller_id": self.seller_id,
             "name": self.name,
             "description": self.description,
             "price": self.price,
