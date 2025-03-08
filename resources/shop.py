@@ -1,83 +1,83 @@
-from flask import request, jsonify
 from flask_restful import Resource
+from flask import request,jsonify
+
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Order, Product, User
 
 # PRODUCTS CRUD OPERATION 
-# class ProductDisplayResource(Resource):
-#     def get(self):
-#         products = Product.query.all()
-#         return jsonify([product.to_dict() for product in products]), 200
+class ProductDisplayResource(Resource):
+    def get(self):
+        products = Product.query.all()
+        return [product.to_dict() for product in products]
     
-#     def post(self):
-#         data = request.get_json()
+    def post(self):
+        data = request.get_json()
 
-#         required_fields = {"name","price","description","image","category"}
-#         if not data or not required_fields.issubset(data.keys()):
-#             return jsonify({"error": "Missing required fields"}), 400
+        required_fields = {"name","price","description","image","category"}
+        if not data or not required_fields.issubset(data.keys()):
+            return({"error": "Missing required fields"}), 400
         
-#         existing_product = Product.query.filter_by(name=data["name"]).first()
-#         if existing_product:
-#             return jsonify({"error": "Product already exists"}), 400
+        existing_product = Product.query.filter_by(name=data["name"]).first()
+        if existing_product:
+            return({"error": "Product already exists"}), 400
     
-#         new_product = Product(**data)
-#         db.session.add(new_product)
-#         db.session.commit()
-
-#         return jsonify(new_product.to_dict()), 201
+        new_product = Product(**data)
+        db.session.add(new_product)
+        db.session.commit()
+        print(new_product)
+        return(new_product.to_dict()), 201
     
-# class ProductResource(Resource):
-#     def get(self, id):
-
-#         product = Product.query.get(id)
-#         if not product:
-#             return jsonify({"error": "Product not found"}), 404
-#         return jsonify(product.to_dict()), 200
+class ProductResource(Resource):
+    def get(self, id):
+        product = Product.query.get(id)
+        if not product:
+            return({"error": "Product not found"}), 404
+        return(product.to_dict()), 200
         
-#     def patch(self, id):
+    def patch(self, id):
 
-#         data = request.get_json()
-#         product = Product.query.get(id)
-#         if not product:
-#             return jsonify({"error": "Product not found"}), 404
+        data = request.get_json()
+        product = Product.query.get(id)
+        if not product:
+            return({"error": "Product not found"}), 404
 
-#         if 'name' in data:
-#             product.name = data['name']
-#         if 'price' in data:
-#             product.price = data['price']
-#         if 'description' in data:
-#             product.description = data['description']
-#         if 'image' in data:
-#             product.image = data['image']
-#         if 'category' in data:
-#             product.category = data['category']
+        if 'name' in data:
+            product.name = data['name']
+        if 'price' in data:
+            product.price = data['price']
+        # if 'description' in data:
+        #     product.description = data['description']
+        # if 'image' in data:
+        #     product.image = data['image']
+        # if 'category' in data:
+        #     product.category = data['category']
 
-#         db.session.commit()
-#         return jsonify([product.to_dict()]), 200
+        db.session.commit()
+        return(product.to_dict()), 200
 
-#     def delete(self, id):
+    def delete(self, id):
 
-#         product = Product.query.get(id)
-#         if not product:
-#             return jsonify({"error": "Product not found"}), 404
+        product = Product.query.get(id)
+        if not product:
+            return({"error": "Product not found"}), 404
 
-#         db.session.delete(product)
-#         db.session.commit()
-#         return jsonify({"message": "Product deleted"}), 200
+        db.session.delete(product)
+        db.session.commit()
+        return({"message": "Product deleted"}), 200
    
 # ORDER CRUD OPERATIONS
 class OrderDisplayResource(Resource):
     def get(self):
         orders = Order.query.all()
-        return jsonify([order.to_dict() for order in orders]), 200
+        return([order.to_dict() for order in orders]), 200
     
     def post(self):
         data = request.get_json()
         required_fields = {"full_name", "address", "city", "payment_method", "total_amount"}
         
         if not data or not required_fields.issubset(data.keys()):
-            return jsonify({"error": "Missing required fields"}), 400
+            return({"error": "Missing required fields"}), 400
         
         new_order = Order(
             full_name=data["full_name"],
@@ -90,21 +90,21 @@ class OrderDisplayResource(Resource):
 
         db.session.add(new_order)
         db.session.commit()
-        return jsonify(new_order.to_dict()), 201
+        return(new_order.to_dict()), 201
 
 
 class OrderResource(Resource):
     def get(self, id):
         order = Order.query.get(id)
         if not order:
-            return jsonify({"error": "Order not found"}), 404
+            return({"error": "Order not found"}), 404
         
-        return jsonify(order.to_dict()), 200
+        return(order.to_dict()), 200
     
     def patch(self, id):
         order = Order.query.get(id)
         if not order:
-            return jsonify({"error": "Order not found"}), 404
+            return({"error": "Order not found"}), 404
         
         data = request.get_json()
 
@@ -122,16 +122,17 @@ class OrderResource(Resource):
             order.status = data['status']
 
         db.session.commit()
-        return jsonify(order.to_dict()), 200
+        return(order.to_dict()), 200
 
     def delete(self, id):
         order = Order.query.get(id)
         if not order:
-            return jsonify({"error": "Order not found"}), 404
+            return({"error": "Order not found"}), 404
         
         db.session.delete(order)
         db.session.commit()
-        return jsonify({"message": "Order deleted successfully"}), 200
+        return({"message": "Order deleted successfully"}), 200
+
 
 # USERS CRUD OPERATION
 
