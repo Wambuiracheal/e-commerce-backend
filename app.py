@@ -172,7 +172,7 @@ def create_app():
             return jsonify ({'error' : 'invalid callback data'}), 400
 
     def get_access_token():
-        url = ' '
+        url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         response = requests.get(url, auth=(consumer_key, consumer_secret))
         return response.json().get('access_token') if response.status_code == 200 else None
 

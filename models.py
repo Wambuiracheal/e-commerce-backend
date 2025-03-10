@@ -11,7 +11,7 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    category = db.Column(db.Enum('clothes','shoes','electronics','utensils','beauty'))
+    category = db.Column(db.Enum('clothes','shoes','electronics','utensils','beauty',  name='product_category_enum'))
     image = db.Column(db.String(255), nullable=False)
 
     cart_items = db.relationship('Cart', backref='product', lazy=True)
