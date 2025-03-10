@@ -5,7 +5,7 @@ import base64
 import datetime
 from datetime import timedelta
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -90,13 +90,15 @@ def create_app():
     # MPESA Payment Integration
     consumer_key = "1dod7XxWDUZ47l5haEteatUPA9gAQab2qndGq1i99vdMRgrw"
     consumer_secret = "v7NRdg8ImXtVejf7PHOWI8BUrl3LGBjnZHNDJeyrJKaAn95R08AZ6sAoKGjm18rF"
-    shortcode = "138283"
+    shortcode = "174379"
     passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-    callback_url = "https://mydomain.com/path"
+    callback_url = "https://4ab0-105-163-1-181.ngrok-free.app/mpesa/callback"
     
-  
+    print("M-Pesa Response:", response.status_code, response.text)
+
 
     @app.route('/mpesa/pay', methods = ['POST'])
+    @cross_origin()
     def mpesa_pay():
         phone_number = request.json.get('phone_number')
         amount = request.json.get('amount')
@@ -172,7 +174,7 @@ def create_app():
             return jsonify ({'error' : 'invalid callback data'}), 400
 
     def get_access_token():
-        url = ' '
+        url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
         response = requests.get(url, auth=(consumer_key, consumer_secret))
         return response.json().get('access_token') if response.status_code == 200 else None
 
