@@ -96,8 +96,6 @@ def create_app():
     passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
     callback_url = "https://mydomain.com/path"
     
-  
-
     @app.route('/mpesa/pay', methods = ['POST'])
     def mpesa_pay():
         phone_number = request.json.get('phone_number')
