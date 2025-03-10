@@ -132,67 +132,67 @@ class OrderResource(Resource):
         db.session.delete(order)
         db.session.commit()
         return({"message": "Order deleted successfully"}), 200
-class BuyerDisplayResource(Resource):
-    def get(self):
-        # Retrieve all buyers
-        buyers = Buyer.query.all()
-        return [buyer.to_dict() for buyer in buyers], 200
+# class BuyerDisplayResource(Resource):
+#     def get(self):
+#         # Retrieve all buyers
+#         buyers = Buyer.query.all()
+#         return [buyer.to_dict() for buyer in buyers], 200
 
-    def post(self):
-        # Create a new buyer
-        data = request.get_json()
+#     def post(self):
+#         # Create a new buyer
+#         data = request.get_json()
         
-        required_fields = {"first_name", "last_name", "email", "address", "phone_number"}
-        if not data or not required_fields.issubset(data.keys()):
-            return {"error": "Missing required fields"}, 400
+#         required_fields = {"first_name", "last_name", "email", "address", "phone_number"}
+#         if not data or not required_fields.issubset(data.keys()):
+#             return {"error": "Missing required fields"}, 400
         
-        existing_buyer = Buyer.query.filter_by(email=data["email"]).first()
-        if existing_buyer:
-            return {"error": "Buyer already exists with this email"}, 400
+#         existing_buyer = Buyer.query.filter_by(email=data["email"]).first()
+#         if existing_buyer:
+#             return {"error": "Buyer already exists with this email"}, 400
         
-        new_buyer = Buyer(**data)
-        db.session.add(new_buyer)
-        db.session.commit()
-        return new_buyer.to_dict(), 201
+#         new_buyer = Buyer(**data)
+#         db.session.add(new_buyer)
+#         db.session.commit()
+#         return new_buyer.to_dict(), 201
 
-class BuyerResource(Resource):
-    def get(self, id):
-        # Retrieve a single buyer by ID
-        buyer = Buyer.query.get(id)
-        if not buyer:
-            return {"error": "Buyer not found"}, 404
-        return buyer.to_dict(), 200
+# class BuyerResource(Resource):
+#     def get(self, id):
+#         # Retrieve a single buyer by ID
+#         buyer = Buyer.query.get(id)
+#         if not buyer:
+#             return {"error": "Buyer not found"}, 404
+#         return buyer.to_dict(), 200
 
-    def patch(self, id):
-        # Update buyer information
-        data = request.get_json()
-        buyer = Buyer.query.get(id)
-        if not buyer:
-            return {"error": "Buyer not found"}, 404
+#     def patch(self, id):
+#         # Update buyer information
+#         data = request.get_json()
+#         buyer = Buyer.query.get(id)
+#         if not buyer:
+#             return {"error": "Buyer not found"}, 404
 
-        if 'first_name' in data:
-            buyer.first_name = data['first_name']
-        if 'last_name' in data:
-            buyer.last_name = data['last_name']
-        if 'email' in data:
-            buyer.email = data['email']
-        if 'address' in data:
-            buyer.address = data['address']
-        if 'phone_number' in data:
-            buyer.phone_number = data['phone_number']
+#         if 'first_name' in data:
+#             buyer.first_name = data['first_name']
+#         if 'last_name' in data:
+#             buyer.last_name = data['last_name']
+#         if 'email' in data:
+#             buyer.email = data['email']
+#         if 'address' in data:
+#             buyer.address = data['address']
+#         if 'phone_number' in data:
+#             buyer.phone_number = data['phone_number']
         
-        db.session.commit()
-        return buyer.to_dict(), 200
+#         db.session.commit()
+#         return buyer.to_dict(), 200
 
-    def delete(self, id):
-        # Delete a buyer by ID
-        buyer = Buyer.query.get(id)
-        if not buyer:
-            return {"error": "Buyer not found"}, 404
+#     def delete(self, id):
+#         # Delete a buyer by ID
+#         buyer = Buyer.query.get(id)
+#         if not buyer:
+#             return {"error": "Buyer not found"}, 404
 
-        db.session.delete(buyer)
-        db.session.commit()
-        return {"message": "Buyer deleted"}, 200
+#         db.session.delete(buyer)
+#         db.session.commit()
+#         return {"message": "Buyer deleted"}, 200
 
 
 # USERS CRUD OPERATION
@@ -264,6 +264,7 @@ class LoginResource(Resource):
         except Exception as e:
             print(f"Error during login: {str(e)}")
             return {"message": "Internal server error"}, 500
+
 class UserResource(Resource):
     @jwt_required()
     def patch(self):

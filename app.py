@@ -94,7 +94,7 @@ def create_app():
     passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
     callback_url = "https://4ab0-105-163-1-181.ngrok-free.app/mpesa/callback"
     
-    print("M-Pesa Response:", response.status_code, response.text)
+    # print("M-Pesa Response:", response.status_code, response.text)
 
 
     @app.route('/mpesa/pay', methods = ['POST'])
@@ -188,7 +188,7 @@ def create_app():
     # print(f"Timestamp: {timestamp}")
     
     return app
-
+app = create_app()
 if __name__ == '__main__':
-    app = create_app()
+   
     app.run(debug=True)
