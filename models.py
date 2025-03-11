@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime
+from sqlalchemy import Enum
 
 db = SQLAlchemy()
 
@@ -11,7 +12,7 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    category = db.Column(db.Enum('clothes','shoes','electronics','utensils','beauty'))
+    category = db.Column(db.Enum('clothes','shoes','electronics','utensils','beauty', name="product_category"))
     image = db.Column(db.String(255), nullable=False)
 
     cart_items = db.relationship('Cart', backref='product', lazy=True)

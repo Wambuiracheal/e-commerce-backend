@@ -13,13 +13,15 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from models import db, OrderItem, Cart, User, Product
 from resources.shop import UserResource ,RegisterResource, LoginResource, ProductDisplayResource, ProductResource, OrderDisplayResource, OrderResource, BuyerDisplayResource, BuyerResource
+from dotenv import load_dotenv
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)
     
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shopit.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['JWT_SECRET_KEY'] = 'bc9f3a4897ef90fc6c27f17ee1905a2f'
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=7)
     
@@ -90,11 +92,11 @@ def create_app():
         return jsonify({'message': 'Cart item removed'}), 200
     
     # MPESA Payment Integration
-    consumer_key = "1dod7XxWDUZ47l5haEteatUPA9gAQab2qndGq1i99vdMRgrw"
-    consumer_secret = "v7NRdg8ImXtVejf7PHOWI8BUrl3LGBjnZHNDJeyrJKaAn95R08AZ6sAoKGjm18rF"
-    shortcode = "174379"
-    passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-    callback_url = "https://4ab0-105-163-1-181.ngrok-free.app/mpesa/callback"
+    consumer_key = os.getenv("CONSUMER_KEY")
+    consumer_secret = os.getenv("CONSUMER_SECRET")
+    shortcode = os.getenv("SHORTCODE")
+    passkey = os.getenv("PASSKEY")
+    callback_url = os.getenv("CALLBACK_URL")
     
     # print("M-Pesa Response:", response.status_code, response.text)
 
