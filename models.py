@@ -86,6 +86,14 @@ class User(db.Model):
     orders = db.relationship("Order", backref="user", lazy=True)
     cart_items = db.relationship("Cart", backref="user", lazy=True)
 
+    def to_dict(self):
+        return {
+            "id":self.id,
+            "name":self.name,
+            "email":self.email,
+            "role":self.role
+        }
+
 # CART
 class Cart(db.Model):
     __tablename__ = "cart"

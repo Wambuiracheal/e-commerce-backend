@@ -12,7 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from models import db, OrderItem, Cart, User, Product
-from resources.shop import UserResource ,RegisterResource, LoginResource, ProductDisplayResource, ProductResource, OrderDisplayResource, OrderResource
+from resources.shop import UserResource ,RegisterResource, LoginResource, ProductDisplayResource, ProductResource, OrderDisplayResource, OrderResource, BuyerDisplayResource, BuyerResource
 
 def create_app():
     app = Flask(__name__)
@@ -36,6 +36,8 @@ def create_app():
     # Register API routes
     api.add_resource(ProductDisplayResource, '/products')
     api.add_resource(ProductResource, '/products/<int:id>')
+    api.add_resource(BuyerDisplayResource, '/buyer')
+    api.add_resource(BuyerResource, '/buyer/<int:id>')
     api.add_resource(OrderDisplayResource, '/orders')
     api.add_resource(OrderResource, '/orders/<int:id>')
     api.add_resource(RegisterResource, '/register')
